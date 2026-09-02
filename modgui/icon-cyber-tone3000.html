@@ -1,0 +1,110 @@
+<div class="mod-pedal mod-pedal-cyber-tone3000{{{cns}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <!-- Header / Brand -->
+    <div class="t3k-pedal-header">
+        <div class="t3k-pedal-brand">CYBER AUDIO</div>
+        <div class="t3k-pedal-title">TONE 3000</div>
+        <div class="t3k-pedal-subtitle">NAM & IR CLOUD PLAYER</div>
+    </div>
+
+    <!-- Active Model Display Screen -->
+    <div class="t3k-lcd-screen">
+        <div class="t3k-lcd-label">ACTIVE CAPTURE</div>
+        <div class="t3k-lcd-model" data-role="model-name">Martin D-45 Studio Mic</div>
+        <div class="t3k-lcd-ir" data-role="ir-name">Cab: Neumann U87 Condenser</div>
+    </div>
+
+    <!-- Open TONE3000 Cloud Button (Tuner-Style Addon Trigger) -->
+    <div class="t3k-cloud-btn-wrapper">
+        <button type="button" class="t3k-cloud-trigger-btn" title="Open Full TONE3000 Cloud Interface">
+            <span class="t3k-cloud-icon">&#9729;</span> OPEN TONE3000 CLOUD
+        </button>
+    </div>
+
+    <!-- Top Row Controls: Gain, Volume, Gate -->
+    <div class="t3k-controls-row t3k-top-row">
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="input_gain" data-min="-24" data-max="24" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="input_gain" style="display:none;"></div>
+            <span class="t3k-knob-title">GAIN</span>
+        </div>
+
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="gate" data-min="-80" data-max="-20" data-default="-80">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="gate" style="display:none;"></div>
+            <span class="t3k-knob-title">GATE</span>
+        </div>
+
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="output_level" data-min="-24" data-max="24" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="output_level" style="display:none;"></div>
+            <span class="t3k-knob-title">LEVEL</span>
+        </div>
+    </div>
+
+    <!-- Mid Row Controls: Bass, Mid, Treble -->
+    <div class="t3k-controls-row t3k-mid-row">
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="bass" data-min="-12" data-max="12" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="bass" style="display:none;"></div>
+            <span class="t3k-knob-title">BASS</span>
+        </div>
+
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="mid" data-min="-12" data-max="12" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mid" style="display:none;"></div>
+            <span class="t3k-knob-title">MID</span>
+        </div>
+
+        <div class="t3k-knob-cell">
+            <div class="custom-knob-dial" data-symbol="treble" data-min="-12" data-max="12" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="treble" style="display:none;"></div>
+            <span class="t3k-knob-title">TREBLE</span>
+        </div>
+    </div>
+
+    <!-- Hidden ports for Model, IR, IR Blend -->
+    <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="model" style="display:none;"></div>
+    <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="ir" style="display:none;"></div>
+    <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="ir_blend" style="display:none;"></div>
+
+    <!-- Bypass Footswitch & Jewel LED -->
+    <div class="t3k-footswitch-area">
+        <div class="mod-light on" mod-role="bypass-light"></div>
+        <div class="mod-footswitch" mod-role="bypass"></div>
+    </div>
+
+    <!-- Input / Output Audio Jacks -->
+    {{#effect.ports.audio.input}}
+    <div class="mod-pedal-input">
+        {{#ports}}
+        <div class="mod-input mod-input-image" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-key">IN</div>
+        </div>
+        {{/ports}}
+    </div>
+    {{/effect.ports.audio.input}}
+
+    {{#effect.ports.audio.output}}
+    <div class="mod-pedal-output">
+        {{#ports}}
+        <div class="mod-output mod-output-image" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-key">OUT</div>
+        </div>
+        {{/ports}}
+    </div>
+    {{/effect.ports.audio.output}}
+</div>
