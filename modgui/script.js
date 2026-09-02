@@ -1,7 +1,7 @@
 function (event) {
     var pedal = event.icon;
+    if (!pedal || !pedal.length) return;
 
-    // Built-in catalog metadata matching Tone3000Engine.hpp
     var TONE_MODELS = [
         { id: 0, name: "Martin D-45 Studio Mic (Acoustic)", author: "CyberAudio", category: "Acoustic", desc: "Warm studio condenser mic response converting raw piezo pickup into full woody Dreadnought body", defaultIr: 0, irName: "Neumann U87 Condenser" },
         { id: 1, name: "Taylor 814ce Grand Auditorium", author: "CyberAudio", category: "Acoustic", desc: "Pristine modern acoustic capture with airy top-end sparkle and balanced fingerpicking clarity", defaultIr: 1, irName: "Royer R-121 Ribbon" },
@@ -22,173 +22,116 @@ function (event) {
     ];
 
     var currentModelId = 0;
-    var currentIrId = 0;
     var audioCtx = null;
 
-    function updateLcdDisplay(modelId) {
-        var m = TONE_MODELS[modelId] || TONE_MODELS[0];
-        pedal.find('[data-role="model-name"]').text(m.name);
-        pedal.find('[data-role="ir-name"]').text("Cab: " + m.irName);
+    function updateOled(mId) {
+        currentModelId = Math.max(0, Math.min(TONE_MODELS.length - 1, mId));
+        var m = TONE_MODELS[currentModelId];
+        pedal.find('#t3k-screen-title').text(m.name);
+        pedal.find('#t3k-screen-sub').text("Cab: " + m.irName);
+        pedal.find('#t3k-screen-cat').text(m.category.toUpperCase());
     }
 
-    // =========================================================================
-    // Rotary Knob Setup
-    // =========================================================================
-    function initKnobs() {
-        pedal.find('.custom-knob-dial').each(function () {
-            var knob = $(this);
-            var symbol = knob.data('symbol');
-            var min = parseFloat(knob.data('min'));
-            var max = parseFloat(knob.data('max'));
-            var def = parseFloat(knob.data('default'));
+    function setModelToPedal(mId) {
+        currentModelId = Math.max(0, Math.min(TONE_MODELS.length - 1, mId));
+        updateOled(currentModelId);
 
-            var isDragging = false;
-            var startY = 0;
-            var startVal = def;
+        var m = TONE_MODELS[currentModelId];
 
-            function setKnobRotation(val) {
-                var norm = (val - min) / (max - min);
-                var deg = -140 + norm * 280;
-                knob.find('.knob-rotor').css('transform', 'rotate(' + deg + 'deg)');
-            }
-
-            setKnobRotation(def);
-
-            knob.on('mousedown touchstart', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                isDragging = true;
-                startY = e.pageY || (e.originalEvent.touches && e.originalEvent.touches[0].pageY);
-
-                var hiddenInput = pedal.find('.mod-knob-image[mod-port-symbol="' + symbol + '"]');
-                var curVal = parseFloat(hiddenInput.val() || def);
-                startVal = isNaN(curVal) ? def : curVal;
-
-                $(document).on('mousemove.t3k touchmove.t3k', function (ev) {
-                    if (!isDragging) return;
-                    var curY = ev.pageY || (ev.originalEvent.touches && ev.originalEvent.touches[0].pageY);
-                    var dy = startY - curY;
-                    var range = max - min;
-                    var newVal = Math.min(max, Math.max(min, startVal + (dy / 150) * range));
-
-                    setKnobRotation(newVal);
-                    hiddenInput.val(newVal).trigger('change');
-                    if (event.set_port_value) {
-                        event.set_port_value(symbol, newVal);
-                    }
-                });
-
-                $(document).on('mouseup.t3k touchend.t3k', function () {
-                    isDragging = false;
-                    $(document).off('mousemove.t3k touchmove.t3k');
-                    $(document).off('mouseup.t3k touchend.t3k');
-                });
-            });
-        });
+        // Trigger MOD-UI port change
+        pedal.find('#t3k-port-model').val(currentModelId).trigger('change');
+        if (event.set_port_value) {
+            event.set_port_value('model', currentModelId);
+            event.set_port_value('ir', m.defaultIr);
+        }
+        pedal.find('#t3k-port-ir').val(m.defaultIr).trigger('change');
     }
 
-    // =========================================================================
-    // Full-Screen Interactive Overlay Modal (Tuner-Style Addon)
-    // =========================================================================
-    function openTone3000Overlay() {
-        var overlayId = 't3k-overlay-modal-' + (pedal.attr('id') || 'default');
-        var existing = $('#' + overlayId);
-        if (existing.length) {
-            existing.fadeIn(200);
-            return;
+    // Bind arrows on OLED
+    pedal.find('#t3k-btn-prev').off('click.t3k').on('click.t3k', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var next = (currentModelId - 1 + TONE_MODELS.length) % TONE_MODELS.length;
+        setModelToPedal(next);
+    });
+
+    pedal.find('#t3k-btn-next').off('click.t3k').on('click.t3k', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var next = (currentModelId + 1) % TONE_MODELS.length;
+        setModelToPedal(next);
+    });
+
+    // ── Full-Screen Overlay Trigger ──────────────────────────────────────────
+    function openOverlay() {
+        var overlayId = 't3k-full-overlay';
+        var modal = $('#' + overlayId);
+        if (!modal.length) {
+            $('body').append('<div id="' + overlayId + '" class="t3k-overlay-backdrop" style="display:none;"></div>');
+            modal = $('#' + overlayId);
         }
 
-        var overlayHtml = [
-            '<div id="' + overlayId + '" class="t3k-overlay-backdrop">',
-            '  <div class="t3k-modal-window">',
-            '    <!-- Header -->',
-            '    <div class="t3k-modal-header">',
-            '      <div class="t3k-modal-title-box">',
-            '        <div class="t3k-modal-logo">TONE<span>3000</span></div>',
-            '        <div class="t3k-modal-cloud-status">&#9679; CONNECTED TO CLOUD</div>',
-            '      </div>',
-            '      <button type="button" class="t3k-close-btn" title="Close Overlay">&times;</button>',
+        var mActive = TONE_MODELS[currentModelId];
+
+        var html = [
+            '<div class="t3k-modal-window">',
+            '  <div class="t3k-modal-header">',
+            '    <div class="t3k-modal-title-box">',
+            '      <div class="t3k-modal-logo">TONE<span>3000</span></div>',
+            '      <div class="t3k-modal-cloud-status">&#9679; CONNECTED TO CLOUD</div>',
             '    </div>',
-            '',
-            '    <!-- Interactive Signal Chain -->',
-            '    <div class="t3k-signal-chain-bar">',
-            '      <div class="t3k-chain-title">Interactive Signal Chain (Click block to view)</div>',
-            '      <div class="t3k-chain-blocks-wrapper">',
-            '        <div class="t3k-chain-block active" data-chain-block="gate">',
-            '          <div class="t3k-block-badge">INPUT BLOCK</div>',
-            '          <div class="t3k-block-name">1. Noise Gate</div>',
-            '        </div>',
-            '        <div class="t3k-chain-arrow">&rarr;</div>',
-            '        <div class="t3k-chain-block active" data-chain-block="nam">',
-            '          <div class="t3k-block-badge">NEURAL CORE</div>',
-            '          <div class="t3k-block-name t3k-chain-active-nam">2. ' + TONE_MODELS[currentModelId].name + '</div>',
-            '        </div>',
-            '        <div class="t3k-chain-arrow">&rarr;</div>',
-            '        <div class="t3k-chain-block active" data-chain-block="ir">',
-            '          <div class="t3k-block-badge">CONVOLVER</div>',
-            '          <div class="t3k-block-name t3k-chain-active-ir">3. ' + TONE_MODELS[currentModelId].irName + '</div>',
-            '        </div>',
-            '        <div class="t3k-chain-arrow">&rarr;</div>',
-            '        <div class="t3k-chain-block active" data-chain-block="eq">',
-            '          <div class="t3k-block-badge">MASTER EQ</div>',
-            '          <div class="t3k-block-name">4. 3-Band Tone Stack</div>',
-            '        </div>',
-            '      </div>',
-            '    </div>',
-            '',
-            '    <!-- Browser Controls -->',
-            '    <div class="t3k-browser-controls">',
-            '      <div class="t3k-search-input-box">',
-            '        <span class="t3k-search-icon">&#128269;</span>',
-            '        <input type="text" class="t3k-search-input" placeholder="Search TONE3000 community captures (e.g. Acoustic, Martin D-45, Deluxe, Plexi, Soldano)...">',
-            '      </div>',
-            '      <div class="t3k-filter-pills">',
-            '        <button type="button" class="t3k-pill active" data-cat="all">All Tones</button>',
-            '        <button type="button" class="t3k-pill" data-cat="Acoustic">Acoustic Guitars & Mics</button>',
-            '        <button type="button" class="t3k-pill" data-cat="Clean">Clean Amps</button>',
-            '        <button type="button" class="t3k-pill" data-cat="Crunch">Edge of Breakup</button>',
-            '        <button type="button" class="t3k-pill" data-cat="High Gain">High Gain Leads</button>',
-            '        <button type="button" class="t3k-pill" data-cat="Bass">Bass Rigs</button>',
-            '      </div>',
-            '    </div>',
-            '',
-            '    <!-- Cards Grid -->',
-            '    <div class="t3k-cards-grid"></div>',
-            '',
-            '    <!-- Drag & Drop Zone -->',
-            '    <div class="t3k-dropzone-section">',
-            '      <div class="t3k-dropzone-box">',
-            '        <div class="t3k-dropzone-text"><strong>Drag & Drop local .nam model or .wav IR file</strong> to load directly into the pedal</div>',
-            '      </div>',
+            '    <button type="button" class="t3k-close-btn" id="t3k-modal-close-x">&times;</button>',
+            '  </div>',
+            '  <div class="t3k-signal-chain-bar">',
+            '    <div class="t3k-chain-title">Signal Chain Architecture</div>',
+            '    <div class="t3k-chain-blocks-wrapper">',
+            '      <div class="t3k-chain-block active"><div class="t3k-block-badge">INPUT BLOCK</div><div class="t3k-block-name">1. Noise Gate</div></div>',
+            '      <div class="t3k-chain-arrow">&rarr;</div>',
+            '      <div class="t3k-chain-block active"><div class="t3k-block-badge">NEURAL CORE</div><div class="t3k-block-name t3k-ov-model">2. ' + mActive.name + '</div></div>',
+            '      <div class="t3k-chain-arrow">&rarr;</div>',
+            '      <div class="t3k-chain-block active"><div class="t3k-block-badge">CONVOLVER</div><div class="t3k-block-name t3k-ov-ir">3. ' + mActive.irName + '</div></div>',
+            '      <div class="t3k-chain-arrow">&rarr;</div>',
+            '      <div class="t3k-chain-block active"><div class="t3k-block-badge">MASTER EQ</div><div class="t3k-block-name">4. 3-Band Tone Stack</div></div>',
             '    </div>',
             '  </div>',
+            '  <div class="t3k-browser-controls">',
+            '    <div class="t3k-search-input-box">',
+            '      <span class="t3k-search-icon">&#128269;</span>',
+            '      <input type="text" class="t3k-search-input" id="t3k-ov-search" placeholder="Search captures (e.g. Martin D-45, Deluxe, AC30, Soldano)...">',
+            '    </div>',
+            '    <div class="t3k-filter-pills">',
+            '      <button type="button" class="t3k-pill active" data-cat="all">All Tones</button>',
+            '      <button type="button" class="t3k-pill" data-cat="Acoustic">Acoustic Guitars & Mics</button>',
+            '      <button type="button" class="t3k-pill" data-cat="Clean">Clean Amps</button>',
+            '      <button type="button" class="t3k-pill" data-cat="Crunch">Edge of Breakup</button>',
+            '      <button type="button" class="t3k-pill" data-cat="High Gain">High Gain Leads</button>',
+            '      <button type="button" class="t3k-pill" data-cat="Bass">Bass Rigs</button>',
+            '    </div>',
+            '  </div>',
+            '  <div class="t3k-cards-grid" id="t3k-ov-grid"></div>',
             '</div>'
         ].join('\n');
 
-        var overlay = $(overlayHtml);
-        $('body').append(overlay);
-        overlay.hide().fadeIn(200);
+        modal.html(html);
 
-        function renderCards(filterCat, searchStr) {
-            var grid = overlay.find('.t3k-cards-grid');
+        function renderGrid(filterCat, searchStr) {
+            var grid = modal.find('#t3k-ov-grid');
             grid.empty();
 
             var filtered = TONE_MODELS.filter(function (m) {
-                var matchesCat = (filterCat === 'all' || m.category === filterCat);
-                var matchesSearch = true;
+                var matchCat = (filterCat === 'all' || m.category === filterCat);
+                var matchSearch = true;
                 if (searchStr && searchStr.trim().length > 0) {
                     var s = searchStr.toLowerCase().trim();
-                    matchesSearch = (m.name.toLowerCase().indexOf(s) !== -1 ||
-                                     m.desc.toLowerCase().indexOf(s) !== -1 ||
-                                     m.author.toLowerCase().indexOf(s) !== -1);
+                    matchSearch = (m.name.toLowerCase().indexOf(s) !== -1 ||
+                                   m.desc.toLowerCase().indexOf(s) !== -1 ||
+                                   m.author.toLowerCase().indexOf(s) !== -1);
                 }
-                return matchesCat && matchesSearch;
+                return matchCat && matchSearch;
             });
 
             filtered.forEach(function (m) {
-                var isCurrent = (m.id === currentModelId);
+                var isCur = (m.id === currentModelId);
                 var card = $([
-                    '<div class="t3k-tone-card' + (isCurrent ? ' current-active' : '') + '" data-model-id="' + m.id + '">',
+                    '<div class="t3k-tone-card' + (isCur ? ' current-active' : '') + '" data-id="' + m.id + '">',
                     '  <div class="t3k-card-header">',
                     '    <div class="t3k-card-title">' + m.name + '</div>',
                     '    <span class="t3k-card-badge">' + m.category.toUpperCase() + '</span>',
@@ -198,138 +141,106 @@ function (event) {
                     '    <div class="t3k-card-author">Captured by ' + m.author + '</div>',
                     '    <div class="t3k-card-buttons">',
                     '      <button type="button" class="t3k-btn-preview" data-id="' + m.id + '">&#9658; Audition</button>',
-                    '      <button type="button" class="t3k-btn-load' + (isCurrent ? ' loaded' : '') + '" data-id="' + m.id + '">' + (isCurrent ? 'Active &#10003;' : 'Load &rarr;') + '</button>',
+                    '      <button type="button" class="t3k-btn-load' + (isCur ? ' loaded' : '') + '" data-id="' + m.id + '">' + (isCur ? 'Active &#10003;' : 'Load &rarr;') + '</button>',
                     '    </div>',
                     '  </div>',
                     '</div>'
                 ].join(''));
 
-                // Audition audio preview
                 card.find('.t3k-btn-preview').on('click', function (e) {
                     e.stopPropagation();
                     playAudition(m.id);
                 });
 
-                // Load tone into pedal
                 card.find('.t3k-btn-load').on('click', function (e) {
                     e.stopPropagation();
-                    loadModelToPedal(m.id);
+                    setModelToPedal(m.id);
+                    modal.find('.t3k-ov-model').text('2. ' + m.name);
+                    modal.find('.t3k-ov-ir').text('3. ' + m.irName);
+                    modal.find('.t3k-tone-card').removeClass('current-active');
+                    card.addClass('current-active');
+                    modal.find('.t3k-btn-load').removeClass('loaded').html('Load &rarr;');
+                    $(this).addClass('loaded').html('Active &#10003;');
                 });
 
                 grid.append(card);
             });
         }
 
-        renderCards('all', '');
+        renderGrid('all', '');
 
-        // Search event
-        overlay.find('.t3k-search-input').on('input', function () {
-            var activeCat = overlay.find('.t3k-pill.active').data('cat') || 'all';
-            renderCards(activeCat, $(this).val());
+        modal.find('#t3k-ov-search').on('input', function () {
+            var cat = modal.find('.t3k-pill.active').data('cat') || 'all';
+            renderGrid(cat, $(this).val());
         });
 
-        // Pill filters
-        overlay.find('.t3k-pill').on('click', function () {
-            overlay.find('.t3k-pill').removeClass('active');
+        modal.find('.t3k-pill').on('click', function () {
+            modal.find('.t3k-pill').removeClass('active');
             $(this).addClass('active');
-            var search = overlay.find('.t3k-search-input').val();
-            renderCards($(this).data('cat'), search);
+            var search = modal.find('#t3k-ov-search').val();
+            renderGrid($(this).data('cat'), search);
         });
 
-        // Close handlers
-        function closeOverlay() {
-            overlay.fadeOut(150);
-        }
-
-        overlay.find('.t3k-close-btn').on('click', closeOverlay);
-        overlay.on('click', function (e) {
-            if ($(e.target).hasClass('t3k-overlay-backdrop')) {
-                closeOverlay();
-            }
+        modal.find('#t3k-modal-close-x').on('click', function () {
+            modal.fadeOut(150);
         });
 
-        $(document).on('keydown.t3k_esc', function (e) {
-            if (e.keyCode === 27) closeOverlay();
+        modal.off('click.bg').on('click.bg', function (e) {
+            if ($(e.target).is('#' + overlayId)) modal.fadeOut(150);
         });
-    }
 
-    function loadModelToPedal(modelId) {
-        currentModelId = modelId;
-        var m = TONE_MODELS[modelId] || TONE_MODELS[0];
-
-        // Send port updates to LV2 engine
-        if (event.set_port_value) {
-            event.set_port_value('model', modelId);
-            event.set_port_value('ir', m.defaultIr);
-        }
-
-        // Update hidden inputs
-        pedal.find('.mod-knob-image[mod-port-symbol="model"]').val(modelId).trigger('change');
-        pedal.find('.mod-knob-image[mod-port-symbol="ir"]').val(m.defaultIr).trigger('change');
-
-        // Update pedal LCD
-        updateLcdDisplay(modelId);
-
-        // Update overlay UI
-        $('.t3k-chain-active-nam').text('2. ' + m.name);
-        $('.t3k-chain-active-ir').text('3. ' + m.irName);
-        $('.t3k-tone-card').removeClass('current-active');
-        $('.t3k-tone-card[data-model-id="' + modelId + '"]').addClass('current-active');
-        $('.t3k-btn-load').removeClass('loaded').html('Load &rarr;');
-        $('.t3k-btn-load[data-id="' + modelId + '"]').addClass('loaded').html('Active &#10003;');
+        modal.fadeIn(200);
     }
 
     function playAudition(modelId) {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             var now = audioCtx.currentTime;
-            var freqs = [196.00, 246.94, 293.66, 392.00, 493.88]; // G major acoustic chord
-
+            var freqs = [196.00, 246.94, 293.66, 392.00, 493.88];
             freqs.forEach(function (f, i) {
                 var osc = audioCtx.createOscillator();
                 var gain = audioCtx.createGain();
                 osc.type = (modelId < 4) ? 'triangle' : 'sawtooth';
                 osc.frequency.setValueAtTime(f, now + i * 0.08);
-
                 gain.gain.setValueAtTime(0.0001, now + i * 0.08);
-                gain.gain.exponentialRampToValueAtTime(0.15, now + i * 0.08 + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.9);
-
+                gain.gain.exponentialRampToValueAtTime(0.14, now + i * 0.08 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.85);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start(now + i * 0.08);
-                osc.stop(now + i * 0.08 + 1.0);
+                osc.stop(now + i * 0.08 + 0.95);
             });
-        } catch (e) {
-            console.log('Audition sound not supported', e);
+        } catch (err) {}
+    }
+
+    pedal.find('#t3k-cloud-trigger-btn').off('click.t3k').on('click.t3k', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        openOverlay();
+    });
+
+    pedal.off('dblclick.t3k').on('dblclick.t3k', function (e) {
+        if (!$(e.target).closest('.mod-knob, .mod-footswitch, #t3k-btn-prev, #t3k-btn-next').length) {
+            openOverlay();
+        }
+    });
+
+    // ── Handle incoming port changes from host ───────────────────────────────
+    function handle_event(symbol, value) {
+        if (symbol === 'model') {
+            updateOled(Math.round(value));
         }
     }
 
-    // =========================================================================
-    // Trigger Hook
-    // =========================================================================
-    pedal.find('.t3k-cloud-trigger-btn').on('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openTone3000Overlay();
-    });
-
-    // Also open on double clicking the pedal body
-    pedal.on('dblclick', function (e) {
-        if (!$(e.target).closest('.custom-knob-dial, .mod-footswitch').length) {
-            openTone3000Overlay();
+    if (event.type === 'start') {
+        var ports = event.ports;
+        if (ports) {
+            for (var p in ports) {
+                if (ports.hasOwnProperty(p) && ports[p].symbol === 'model') {
+                    handle_event('model', ports[p].value);
+                }
+            }
         }
-    });
-
-    // Init
-    initKnobs();
-    updateLcdDisplay(0);
-
-    // Initial value updates from MOD host
-    if (event.ports && event.ports.model !== undefined) {
-        var mId = Math.round(event.ports.model);
-        currentModelId = mId;
-        updateLcdDisplay(mId);
+    } else if (event.type === 'change') {
+        handle_event(event.symbol, event.value);
     }
 }

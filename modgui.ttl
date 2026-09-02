@@ -9,10 +9,10 @@
         modgui:screenshot <modgui/screenshot.png> ;
         modgui:thumbnail <modgui/thumbnail.png> ;
         modgui:javascript <modgui/script.js> ;
-        modgui:brand "CyberAudio" ;
-        modgui:label "TONE3000" ;
+        modgui:brand "Cyber Audio" ;
+        modgui:label "TONE 3000" ;
         modgui:model "boxy" ;
-        modgui:panel "8-knobs" ;
+        modgui:panel "custom" ;
         modgui:color "black" ;
         modgui:knob "steel" ;
         modgui:port [

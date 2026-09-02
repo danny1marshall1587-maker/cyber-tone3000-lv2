@@ -1,244 +1,203 @@
 /* ==========================================================================
-   Cyber TONE3000 Pedal Chassis Styles
+   CYBER AUDIO - TONE3000 MOD-UI STYLESHEET
+   Sleek Dark Titanium & Neon Cyan Boutique Pedal Styling
    ========================================================================== */
 
-.mod-pedal-cyber-tone3000 {
-    width: 232px;
-    height: 350px;
-    background: linear-gradient(165deg, #181e2b 0%, #0d121c 100%);
-    border: 2px solid #00d2ff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 210, 255, 0.25);
-    position: relative;
-    user-select: none;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #e0e8f5;
-    overflow: visible;
+.tone3000-pedal {
+    background: #0d121c !important;
+    border: 2px solid #00d2ff !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 210, 255, 0.25) !important;
+    border-radius: 14px !important;
+    width: 252px !important;
+    min-height: 440px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
-/* Header */
-.t3k-pedal-header {
-    text-align: center;
-    padding-top: 10px;
+.tone3000-pedal .mod-plugin-brand h1 {
+    color: #7b92a8 !important;
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    margin-top: 10px !important;
 }
 
-.t3k-pedal-brand {
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: #00d2ff;
-    font-weight: 700;
-    text-transform: uppercase;
+.tone3000-pedal .mod-plugin-name h1 {
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.5px !important;
+    text-align: center !important;
+    text-shadow: 0 0 8px rgba(0, 210, 255, 0.5) !important;
+    margin-top: 2px !important;
 }
 
-.t3k-pedal-title {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #ffffff;
-    text-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
-    line-height: 1.1;
+/* OLED Screen */
+.tone3000-pedal .t3k-oled-screen {
+    margin: 10px 14px 8px 14px;
+    background: #060910;
+    border: 1px solid #1e2c3e;
+    border-radius: 8px;
+    padding: 6px 8px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
 }
 
-.t3k-pedal-subtitle {
+.tone3000-pedal .t3k-oled-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+}
+
+.tone3000-pedal .t3k-oled-badge {
     font-size: 8px;
-    letter-spacing: 1.5px;
-    color: #7b92a8;
-    text-transform: uppercase;
-    margin-top: 1px;
+    font-weight: 800;
+    color: #00d2ff;
+    letter-spacing: 1px;
 }
 
-/* Active LCD Display */
-.t3k-lcd-screen {
-    background: #080c14;
-    border: 1px solid rgba(0, 210, 255, 0.4);
-    border-radius: 6px;
-    margin: 8px 14px 6px 14px;
-    padding: 5px 8px;
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
-    text-align: center;
-}
-
-.t3k-lcd-label {
-    font-size: 7px;
-    letter-spacing: 1.5px;
-    color: #52677d;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.t3k-lcd-model {
-    font-size: 11px;
+.tone3000-pedal .t3k-oled-cat {
+    font-size: 8px;
     font-weight: 700;
-    color: #00f0ff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
-    margin: 2px 0 1px 0;
+    color: #5d748c;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
 }
 
-.t3k-lcd-ir {
-    font-size: 8.5px;
-    color: #8da4be;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.tone3000-pedal .t3k-oled-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
 }
 
-/* Cloud Trigger Button */
-.t3k-cloud-btn-wrapper {
+.tone3000-pedal .t3k-oled-arrow {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid #28394e;
+    color: #00d2ff;
+    font-size: 16px;
+    line-height: 1;
+    width: 22px;
+    height: 26px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    user-select: none;
+}
+
+.tone3000-pedal .t3k-oled-arrow:hover {
+    background: #00d2ff;
+    color: #060910;
+}
+
+.tone3000-pedal .t3k-oled-text {
+    flex: 1;
     text-align: center;
+    overflow: hidden;
+}
+
+.tone3000-pedal .t3k-oled-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tone3000-pedal .t3k-oled-sub {
+    font-size: 9px;
+    color: #00d2ff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.85;
+}
+
+/* Open Cloud Trigger Button */
+.tone3000-pedal .t3k-cloud-trigger-wrap {
     margin: 4px 14px 8px 14px;
 }
 
-.t3k-cloud-trigger-btn {
-    background: linear-gradient(135deg, rgba(0, 210, 255, 0.25) 0%, rgba(0, 150, 255, 0.15) 100%);
+.tone3000-pedal .t3k-cloud-trigger-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #0d263b, #093755);
     border: 1px solid #00d2ff;
-    color: #ffffff;
+    color: #00f0ff;
     font-size: 9.5px;
     font-weight: 800;
-    letter-spacing: 1px;
-    padding: 6px 12px;
-    border-radius: 20px;
+    letter-spacing: 0.8px;
+    padding: 7px 0;
+    border-radius: 6px;
     cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 210, 255, 0.2);
+    transition: all 0.2s;
+    user-select: none;
 }
 
-.t3k-cloud-trigger-btn:hover {
-    background: linear-gradient(135deg, rgba(0, 210, 255, 0.45) 0%, rgba(0, 150, 255, 0.35) 100%);
-    box-shadow: 0 0 16px rgba(0, 210, 255, 0.5);
-    transform: translateY(-1px);
+.tone3000-pedal .t3k-cloud-trigger-btn:hover {
+    background: #00d2ff;
+    color: #06111a;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
 }
 
-.t3k-cloud-icon {
+.tone3000-pedal .t3k-cloud-btn-icon {
     font-size: 11px;
     margin-right: 4px;
 }
 
-/* Knob Rows */
-.t3k-controls-row {
+/* Control Rows */
+.tone3000-pedal .mod-control-group {
+    padding: 4px 8px;
     display: flex;
     justify-content: space-around;
-    padding: 0 10px;
-    margin-bottom: 6px;
 }
 
-.t3k-knob-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.tone3000-pedal .mod-knob {
+    text-align: center;
+    position: relative;
     width: 60px;
 }
 
-.t3k-knob-title {
-    font-size: 8px;
+.tone3000-pedal .mod-knob-title {
+    display: block;
+    color: #92a7bf;
+    font-size: 8.5px;
     font-weight: 700;
-    letter-spacing: 1px;
-    color: #9eb2c9;
-    margin-top: 3px;
+    letter-spacing: 0.8px;
+    margin-top: 4px;
     text-transform: uppercase;
 }
 
-/* Rotary Knobs */
-.custom-knob-dial {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #2a3447, #101622);
-    border: 1.5px solid #2f3e57;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
-}
-
-.custom-knob-dial:hover {
-    border-color: #00d2ff;
-    box-shadow: 0 0 8px rgba(0, 210, 255, 0.3);
-}
-
-.knob-rotor {
+/* Footswitch & LED */
+.tone3000-pedal .mod-light {
     position: absolute;
-    top: 3px;
-    left: 17px;
-    width: 2.5px;
-    height: 10px;
-    background: #00f0ff;
-    border-radius: 2px;
-    box-shadow: 0 0 5px #00f0ff;
-    transform-origin: center 16px;
+    top: 12px;
+    right: 14px;
 }
 
-/* Footswitch */
-.t3k-footswitch-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 4px;
+.tone3000-pedal .mod-footswitch {
+    margin: 10px auto 14px auto;
 }
 
-.mod-light {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #222;
-    border: 1px solid #555;
-    margin-bottom: 6px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
-}
-
-.mod-light.on {
-    background: #00f0ff;
-    border-color: #ffffff;
-    box-shadow: 0 0 10px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.6);
-}
-
-.mod-footswitch {
-    width: 38px;
-    height: 38px;
-    background: radial-gradient(circle, #888 20%, #444 80%);
-    border: 3px solid #222;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7);
-}
-
-/* In/Out Jacks */
-.mod-pedal-input, .mod-pedal-output {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.mod-pedal-input { left: -14px; }
-.mod-pedal-output { right: -14px; }
-
-.mod-pedal-input-key, .mod-pedal-output-key {
-    background: #182232;
-    border: 1px solid #00d2ff;
-    color: #00d2ff;
-    font-size: 8px;
-    font-weight: bold;
-    padding: 3px 4px;
-    border-radius: 4px;
-}
-
-/* ==========================================================================
-   Full-Screen Interactive Overlay Modal (Tuner-Style Addon)
-   ========================================================================== */
-
+/* Full-Screen Glassmorphism Modal Injected by Pedal */
 .t3k-overlay-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(7, 11, 18, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    z-index: 100000;
+    background: rgba(5, 9, 15, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 99999;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -255,21 +214,20 @@
     background: #111724;
     border: 1px solid rgba(0, 210, 255, 0.35);
     border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 210, 255, 0.15);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.85), 0 0 40px rgba(0, 210, 255, 0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     margin-bottom: 40px;
 }
 
-/* Modal Header */
 .t3k-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 18px 24px;
     background: #161e2f;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .t3k-modal-title-box {
@@ -285,9 +243,7 @@
     color: #ffffff;
 }
 
-.t3k-modal-logo span {
-    color: #00d2ff;
-}
+.t3k-modal-logo span { color: #00d2ff; }
 
 .t3k-modal-cloud-status {
     font-size: 10px;
@@ -301,8 +257,8 @@
 }
 
 .t3k-close-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
     color: #fff;
     font-size: 14px;
     font-weight: bold;
@@ -322,11 +278,10 @@
     color: #ff4d4d;
 }
 
-/* Interactive Signal Chain Bar */
 .t3k-signal-chain-bar {
     padding: 16px 24px;
     background: #0d121c;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .t3k-chain-title {
@@ -351,8 +306,6 @@
     border-radius: 8px;
     padding: 10px 14px;
     min-width: 140px;
-    cursor: pointer;
-    transition: all 0.2s;
 }
 
 .t3k-chain-block.active {
@@ -384,7 +337,6 @@
     font-size: 14px;
 }
 
-/* Search & Filters */
 .t3k-browser-controls {
     padding: 16px 24px 8px 24px;
     display: flex;
@@ -449,10 +401,9 @@
     font-weight: 700;
 }
 
-/* Tone Card Grid */
 .t3k-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 14px;
     padding: 12px 24px 24px 24px;
 }
@@ -470,7 +421,7 @@
 
 .t3k-tone-card:hover {
     border-color: #00d2ff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 210, 255, 0.15);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 10px rgba(0, 210, 255, 0.15);
     transform: translateY(-2px);
 }
 
@@ -517,7 +468,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255,255,255,0.05);
     padding-top: 10px;
 }
 
@@ -533,8 +484,8 @@
 }
 
 .t3k-btn-preview {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
     color: #cbd5e1;
     font-size: 10px;
     padding: 4px 8px;
@@ -544,7 +495,7 @@
 }
 
 .t3k-btn-preview:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
     color: #fff;
 }
 
@@ -568,33 +519,4 @@
 .t3k-btn-load.loaded {
     background: #22c55e;
     color: #ffffff;
-}
-
-/* Local Dropzone */
-.t3k-dropzone-section {
-    padding: 0 24px 20px 24px;
-}
-
-.t3k-dropzone-box {
-    border: 2px dashed #283a52;
-    border-radius: 8px;
-    padding: 16px;
-    text-align: center;
-    background: rgba(13, 18, 28, 0.5);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.t3k-dropzone-box:hover {
-    border-color: #00d2ff;
-    background: rgba(0, 210, 255, 0.05);
-}
-
-.t3k-dropzone-text {
-    font-size: 11px;
-    color: #7d96b3;
-}
-
-.t3k-dropzone-text strong {
-    color: #00d2ff;
 }
