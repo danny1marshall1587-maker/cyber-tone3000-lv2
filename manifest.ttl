@@ -4,5 +4,4 @@
 <http://cyber-audio.co.uk/plugins/cyber-tone3000>
     a lv2:Plugin ;
     lv2:binary <cyber_tone3000.dll> ;
-    lv2:binary <cyber_tone3000.so> ;
-    rdfs:seeAlso <cyber-tone3000.ttl> .
+    rdfs:seeAlso <cyber-tone3000.ttl> , <modgui.ttl> .

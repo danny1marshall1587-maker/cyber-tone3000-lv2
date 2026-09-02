@@ -215,12 +215,20 @@ function (event) {
 
     pedal.find('#t3k-cloud-trigger-btn').off('click.t3k').on('click.t3k', function (e) {
         e.preventDefault(); e.stopPropagation();
-        openOverlay();
+        if (window.CyberTone3000Instance) {
+            window.CyberTone3000Instance.open();
+        } else {
+            openOverlay();
+        }
     });
 
     pedal.off('dblclick.t3k').on('dblclick.t3k', function (e) {
         if (!$(e.target).closest('.mod-knob, .mod-footswitch, #t3k-btn-prev, #t3k-btn-next').length) {
-            openOverlay();
+            if (window.CyberTone3000Instance) {
+                window.CyberTone3000Instance.open();
+            } else {
+                openOverlay();
+            }
         }
     });
 
